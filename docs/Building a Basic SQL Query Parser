@@ -1,0 +1,30 @@
+import re
+
+def parse_select_query(query):
+    result = {}
+    
+    # Regular expression patterns to match SELECT, columns, table name, and WHERE clause
+    select_pattern = r'^SELECT\s+'
+    from_pattern = r'\s+FROM\s+'
+    where_pattern = r'\s+WHERE\s+'
+    
+   
+    columns = re.search(select_pattern + r'(.+?)' + from_pattern, query, re.IGNORECASE)
+    if columns:
+        result['columns'] = [col.strip() for col in columns.group(1).split(',')]
+    
+  
+    table_name = re.search(from_pattern + r'(.+?)(\s+WHERE\s+|$)', query, re.IGNORECASE)
+    if table_name:
+        result['table'] = table_name.group(1).strip()
+    
+  
+    where_clause = re.search(where_pattern + r'(.+)', query, re.IGNORECASE)
+    if where_clause:
+        result['where'] = where_clause.group(1).strip()
+    
+    return result
+
+query = "SELECT column1, column2 FROM table_name WHERE condition = 'value'"
+parsed_query = parse_select_query(query)
+print(parsed_query)
